@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
  * 说明 :
  */
 @RestController
-@Api(value="用户信息Api",description="用户信息Api List")
+@Api(value="用户信息Api",description="用户信息的增删改查")
 @RequestMapping("/home")
 public class HomeController {
 
@@ -24,24 +24,25 @@ public class HomeController {
     UserService userService;
     @ApiOperation("添加用户")
     //@ApiImplicitParam(name = "user",value = "添加对象",dataType ="User",required = true)
-    @PostMapping("/add/{id}/{username}/{password}/")
+    @PostMapping("/add/{id}/{username}/{password}")
     @ApiResponses(value = {@ApiResponse(code = 200,message = "添加成功")})
-    public ResponseEntity<Void> index (@PathVariable Integer  id,
+    public ResponseEntity<Void> index (@PathVariable String  id,
                                        @PathVariable String  username,
                                        @PathVariable String  password){
 
-            userService.insert(id,username,password);
+            userService.insert(Integer.valueOf(id),username,password);
+        System.out.println(username);
             return new ResponseEntity<Void>(HttpStatus.OK);
 
     }
 
 
     @ApiOperation(value = "根据id删除用户")
-    @DeleteMapping(value = "/del/{index}/")
+    @DeleteMapping(value = "/del/{index}")
     @ApiResponses(value = {@ApiResponse(code = 200,message = "删除成功"),
             @ApiResponse(code = 204,message = "删除失败")})
-    public ResponseEntity<Void> delete(@PathVariable Integer index) {
-        int i = userService.delete(index);
+    public ResponseEntity<Void> delete(@PathVariable String index) {
+        int i = userService.delete(Integer.valueOf(index));
         if(i==1){
             return new ResponseEntity<Void>(HttpStatus.OK);
         }else {
@@ -55,12 +56,13 @@ public class HomeController {
     @PutMapping(value = "/update/{index}/{username}/{password}")
     @ApiResponses(value = {@ApiResponse(code = 200,message = "更新成功"),
             @ApiResponse(code = 204,message = "更新失败")})
-    public ResponseEntity<Void> update(@PathVariable Integer index,
+    public ResponseEntity<Void> update(@PathVariable String index,
                                        @PathVariable String username,
                                        @PathVariable String password) {
-        int i = userService.update(index,username,password);
+        int i = userService.update(Integer.valueOf(index),username,password);
 
         if(i==1){
+
             return new ResponseEntity<Void>(HttpStatus.OK);
         }else {
             return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
@@ -77,6 +79,7 @@ public class HomeController {
         User user= userService.query(username);
 
         if(user!=null){
+            System.out.println("ok");
             return new ResponseEntity<User>( user,HttpStatus.OK);
         }else {
             return new ResponseEntity<User>( HttpStatus.NO_CONTENT);
